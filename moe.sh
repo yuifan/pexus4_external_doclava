@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # Copyright (C) 2010 The Android Open Source Project
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,24 +14,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-LOCAL_PATH := $(call my-dir)
+# A simple script to import the latest code for Doclava and repackage it
+# for the Android build system. Repackaging involves:
+#   * Removing the lib/ directory- jsilver is built from source, and
+#     ant is not used.
+#   * Removing the ant DoclavaTask task (so we don't require ant to build)
 
-# Jar file for Doclava doclet and apicheck standalone program
-# ============================================================
-include $(CLEAR_VARS)
-
-LOCAL_SRC_FILES := $(call all-java-files-under, src)
-
-LOCAL_JAVA_LIBRARIES := \
-	jsilver \
-	guavalib \
-	antlr-runtime
-	
-LOCAL_CLASSPATH := \
-	$(HOST_JDK_TOOLS_JAR)
-
-LOCAL_MODULE := doclava
-
-LOCAL_JAVA_RESOURCE_DIRS := res
-
-include $(BUILD_HOST_JAVA_LIBRARY)
+rm -fr res/ src/ && svn export --force https://doclava.googlecode.com/svn/trunk/ . && rm -fr lib/ samples/ src/com/google/doclava/DoclavaTask.java
